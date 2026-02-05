@@ -36,11 +36,13 @@ public class StartMenuFader : MonoBehaviour
         {
             doFadeAway = true;
             PlayAudio();
+            //this is the most efficient way to avoid unneccasry object deactivations
+            if (m_Text != null && m_Text.activeInHierarchy) m_Text.SetActive(false);
         }
         if (doFadeAway)
         {
             
-            if (m_Text != null) m_Text.SetActive(false);
+            
             m_color.a -= alphaChangeRate;
             m_image.color = m_color;
             if (m_color.a <= 0)
