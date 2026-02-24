@@ -12,16 +12,22 @@ public class StartMenuFader : MonoBehaviour
     ///
 
     //alpha max is 1 and alpha min is 0
-    [SerializeField] private float alphaChangeRate = .005f;
+    public enum Behavior
+    {
+        fadeIn,
+        fadeOut
+    }
+    [SerializeField] private Behavior m_FadeBehavior;
+    [SerializeField] private float alphaChangeRate = 1;
     [SerializeField] private Image m_image;
     [SerializeField] private GameObject m_Text;
     [SerializeField] private bool doFadeAway;
     private Color m_color;
-    private AudioSource m_audioSource;
+    [SerializeField]private AudioSource m_audioSource;
     private void Awake()
     {
         if (m_image == null) { this.enabled = false; return; }
-        m_audioSource = GetComponent<AudioSource>();
+       if(m_audioSource == null) m_audioSource = GetComponent<AudioSource>();
         doFadeAway = false;
         m_color = m_image.color;
         m_color.a = 1;
@@ -41,15 +47,30 @@ public class StartMenuFader : MonoBehaviour
         }
         if (doFadeAway)
         {
-            
-            
-            m_color.a -= alphaChangeRate;
-            m_image.color = m_color;
-            if (m_color.a <= 0)
+
+            switch (m_FadeBehavior)
             {
-                doFadeAway = false;
-                gameObject.SetActive(false);
+                case Behavior.fadeOut:
+                    m_color.a -= alphaChangeRate * Time.deltaTime;
+                    m_image.color = m_color;
+                    if (m_color.a <= 0)
+                    {
+                        doFadeAway = false;
+                        gameObject.SetActive(false);
+                    }
+                    break;
+
+                    case Behavior.fadeIn:
+                    m_color.a += alphaChangeRate * Time.deltaTime;
+                    m_image.color = m_color;
+                    if (m_color.a >= 0)
+                    {
+                        doFadeAway = false;
+                        //gameObject.SetActive(false);
+                    } 
+                    break;
             }
+        
         }
 
     }
